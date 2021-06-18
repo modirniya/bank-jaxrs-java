@@ -7,11 +7,6 @@ class AccountService {
 
     private val mapAccounts = Repository.getAccounts();
 
-    init {
-        mapAccounts[1] = Account("Parham Modirniya", 1)
-        mapAccounts[2] = Account("Neda Kamel", 2)
-    }
-
     fun getAllAccounts(): List<Account> = mapAccounts.values.toList()
 
     fun getAccount(accountNumber: Int): Account = mapAccounts[accountNumber]!!
