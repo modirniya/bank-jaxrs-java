@@ -5,7 +5,9 @@ import dev.cyrus.model.Transaction
 
 class TransactionService {
 
-    private val mapAccounts = Repository.getAccounts();
+    // TODO: Clean up
+
+    private val mapAccounts = Repository.accounts;
 
     fun getAllTransactions(accountNumber: Int): List<Transaction> =
         mapAccounts[accountNumber]!!.transactionsHistory.values.toList()
@@ -35,7 +37,7 @@ class TransactionService {
         return result
     }
 
-    fun getTransaction(accountNumber: Int, transactionId: Int): Transaction =
+    fun getSingleTransaction(accountNumber: Int, transactionId: Int): Transaction =
         getAllTransactions(accountNumber)[transactionId]
 
     fun addTransaction(transaction: Transaction, accountNumber: Int): Transaction {
