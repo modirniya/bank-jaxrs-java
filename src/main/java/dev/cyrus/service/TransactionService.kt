@@ -5,50 +5,49 @@ import dev.cyrus.model.Transaction
 
 class TransactionService {
 
-    // TODO: Clean up
+    private val dataset = Repository.centralAccountsDataset;
 
-    private val mapAccounts = Repository.accounts;
+    fun getAllTransactionsFor(accountNumber: Int): List<Transaction> =
+        dataset[accountNumber]!!.transactionsHistory.values.toList()
 
-    fun getAllTransactions(accountNumber: Int): List<Transaction> =
-        mapAccounts[accountNumber]!!.transactionsHistory.values.toList()
-
-    fun getTransactions(accountNumber: Int, start: Int, size: Int): List<Transaction> {
-        val result = mutableListOf<Transaction>()
-        val rawTransactions = getAllTransactions(accountNumber)
-        var counter = 0
-        val len = if (size > 0) size else rawTransactions.size - start + 1
-        for (element in rawTransactions) {
-            if (element.id >= start) {
-                result.add(element)
-                counter++
+    fun getTransactions(accountNumber: Int, fromIndex: Int, forLengthOf: Int): List<Transaction> {
+        val tempTransactionsList = mutableListOf<Transaction>()
+        val rawTransactionsList = getAllTransactionsFor(accountNumber)
+        var loopCounter = 0
+        val transactionsQuantity = if (forLengthOf > 0) forLengthOf else rawTransactionsList.size - fromIndex + 1
+        for (eachTransaction in rawTransactionsList) {
+            if (eachTransaction.id >= fromIndex) {
+                tempTransactionsList.add(eachTransaction)
+                loopCounter++
             }
-            if (counter >= len)
+            if (loopCounter >= transactionsQuantity)
                 break
         }
-        return result
+        return tempTransactionsList
     }
 
     fun getDeclinedTransactions(accountNumber: Int): List<Transaction> {
-        val result = mutableListOf<Transaction>()
-        val rawTransactionsList = getAllTransactions(accountNumber)
-        for (element in rawTransactionsList)
-            if (!element.isApproved)
-                result.add(element)
-        return result
+        val unapprovedTransactionsList = mutableListOf<Transaction>()
+        val rawTransactionsList = getAllTransactionsFor(accountNumber)
+        for (eachTransaction in rawTransactionsList)
+            if (eachTransaction.isDeclined())
+                unapprovedTransactionsList.add(eachTransaction)
+        return unapprovedTransactionsList
     }
 
     fun getSingleTransaction(accountNumber: Int, transactionId: Int): Transaction =
-        getAllTransactions(accountNumber)[transactionId]
+        getAllTransactionsFor(accountNumber)[transactionId]
 
     fun addTransaction(transaction: Transaction, accountNumber: Int): Transaction {
-        val account = mapAccounts[accountNumber]
+        val account = dataset[accountNumber]
         val transactionsDataset = account!!.transactionsHistory
         transaction.id = transactionsDataset.size + 1
         if (transaction.tag != "deposit")
             transaction.amount *= -1
-        if (account.balance + transaction.amount >= 0) {
-            account.balance += transaction.amount
-            transaction.isApproved = true
+        val currentBalance = account.balance + transaction.amount
+        if (currentBalance >= 0.0) {
+            transaction.isApproved()
+            account.balance = currentBalance
         }
         transactionsDataset[transaction.id] = transaction
         return transaction

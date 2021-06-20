@@ -12,6 +12,12 @@ class Transaction() {
     var amount: Double = 0.0
     val transactionDate = Date()
 
+    fun isApproved() {
+        isApproved = true
+    }
+
+    fun isDeclined() = !isApproved
+
     constructor(title: String, tag: String, amount: Double) : this() {
         this.title = title
         this.tag = tag

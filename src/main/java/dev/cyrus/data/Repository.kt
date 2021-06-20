@@ -4,6 +4,6 @@ import dev.cyrus.model.Account
 
 class Repository {
     companion object {
-        val accounts = mutableMapOf<Int, Account>()
+        val centralAccountsDataset = mutableMapOf<Int, Account>()
     }
 }

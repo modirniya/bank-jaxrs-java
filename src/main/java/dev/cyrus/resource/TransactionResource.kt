@@ -23,7 +23,7 @@ class TransactionResource(private val accountNumber: Int) {
         else if (bean.declined)
             service.getDeclinedTransactions(accountNumber)
         else
-            service.getAllTransactions(accountNumber)
+            service.getAllTransactionsFor(accountNumber)
 
     @POST
     fun newTransaction(transaction: Transaction) =

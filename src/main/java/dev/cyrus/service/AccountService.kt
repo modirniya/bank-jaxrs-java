@@ -5,17 +5,15 @@ import dev.cyrus.model.Account
 
 class AccountService {
 
-    // TODO: Clean up
+    private val dataset = Repository.centralAccountsDataset;
 
-    private val accountsDataset = Repository.accounts;
+    fun getAllAccounts(): List<Account> = dataset.values.toList()
 
-    fun getAllAccounts(): List<Account> = accountsDataset.values.toList()
-
-    fun getAccount(accountNumber: Int): Account = accountsDataset[accountNumber]!!
+    fun getAccount(accountNumber: Int): Account = dataset[accountNumber]!!
 
     fun addAccount(account: Account): Account {
-        account.accountNumber = accountsDataset.size + 1
-        accountsDataset[account.accountNumber] = account
+        account.accountNumber = dataset.size + 1
+        dataset[account.accountNumber] = account
         return account
     }
 
@@ -23,11 +21,10 @@ class AccountService {
         if (accountNumber <= 0)
             return null
         entryAccount.accountNumber = accountNumber
-        accountsDataset[accountNumber] = entryAccount
+        dataset[accountNumber] = entryAccount
         return entryAccount
     }
 
-    fun removeAccount(accountNumber: Int): Account? = accountsDataset.remove(accountNumber)
-
+    fun removeAccount(accountNumber: Int): Account? = dataset.remove(accountNumber)
 
 }
